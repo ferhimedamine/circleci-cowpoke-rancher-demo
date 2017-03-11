@@ -49,7 +49,8 @@ build:
 deploy:
   box:
     id: leankit/drone-cowpoke
-    docker_host: tcp://dind.mgmt.cloudbuzz.io:80
+    tag: latest
+    registry: https://docker.io
     username: $$DOCKER_USERNAME
     password: $$DOCKER_PASSWORD
     email: $$DOCKER_EMAIL
