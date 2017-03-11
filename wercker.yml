@@ -1,0 +1,56 @@
+box:
+  id: quay.io/chiefy/alpine-nodejs
+  tag: 4.3.1
+  registry: https://quay.io
+  cmd: /bin/sh
+
+dev:
+  services:
+    - redis
+  steps:
+      - script:
+        name: set env vars
+        code: |
+          export NODE_ENV=development
+          export SVC_REDIS_HOST=${REDIS_PORT_6379_TCP_ADDR}
+
+      - script:
+        name: npm rebuild
+        code: npm rebuild
+
+      - internal/watch:
+        code: node index.js
+        reload: true
+
+build:
+  steps:
+    - script:
+        name: set env vars
+        code: export NODE_ENV=test
+
+    - npm-install
+
+    - script:
+        name: install test deps globally
+        code: npm install -g tape xo
+
+    - script:
+        name: install test buildgoggles
+        code: npm install buildgoggles@0.2.0-3
+
+    - npm-test
+
+    - script:
+        name: copy files
+        code: |
+          cp $(which node) "$WERCKER_OUTPUT_DIR"
+          cp -RL node_modules config data api index.js package.json "$WERCKER_OUTPUT_DIR"
+
+deploy:
+  box:
+    id: leankit/drone-cowpoke
+    docker_host: tcp://dind.mgmt.cloudbuzz.io:80
+    username: $$DOCKER_USERNAME
+    password: $$DOCKER_PASSWORD
+    email: $$DOCKER_EMAIL
+    repo: ferhimedamine/wercker-node-rancher-demo

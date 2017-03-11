@@ -1,0 +1,41 @@
+{
+  "author": "Christopher Najewicz",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "config": "^1.19.0",
+    "express": "^4.13.4",
+    "js-yaml": "^3.5.3",
+    "lodash": "^4.3.0",
+    "seneca": "^1.1.0",
+    "seneca-redis-store": "0.0.8"
+  },
+  "description": "Demo node microservice deployed with wercker to ecs",
+  "devDependencies": {
+    "seneca-mem-store": "^0.5.0",
+    "tape": "^4.4.0",
+    "xo": "^0.12.1"
+  },
+  "keywords": [
+    "ecs",
+    "aws",
+    "seneca",
+    "wercker",
+    "cd"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "wercker-node-ecs-demo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//chiefy/wercker-node-ecs-demo"
+  },
+  "scripts": {
+    "apply-ecs": "pushd terraform/ecs && terraform apply -state ../../ecs.tfstate -var-file=terraform.tfvars ; popd",
+    "plan-ecs": "pushd terraform/ecs && terraform plan -state ../../ecs.tfstate -var-file=terraform.tfvars ; popd",
+    "destroy-ecs": "pushd terraform/ecs && terraform destroy -state ../../ecs.tfstate",
+    "dev": "wercker dev --publish 3000",
+    "test": "tape ./test/**/*.js",
+    "config-tf-remote": "terraform remote config -state=./movie-api-ecs.tfstate -backend=s3  -backend-config='region=us-east-1' -backend-config='bucket=tf_state_bucket' -backend-config='key=movie_api_ecs'"
+  },
+  "version": "1.0.0"
+}
